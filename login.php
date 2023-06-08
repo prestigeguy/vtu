@@ -1,4 +1,6 @@
 <?php
+session_start();
+
 include "conn.php";
 $msg = "";
 
@@ -23,7 +25,11 @@ if(isset($_POST['login'])){
 	$numrows = mysqli_num_rows($res);
 
 	if($numrows > 0){
+
+		$_SESSION['uname'] = $unamepname;
 		header("Location: user/");
+
+
 	}else{
 		$msg = "Invalid login details";
 	}
