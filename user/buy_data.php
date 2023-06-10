@@ -67,7 +67,7 @@ include "header.php";
            <input type="text" name="wallet" id="phone1" value="" class="form-control" placeholder="Wallet: &#8358;<?php echo $wallets;?>" readonly>
          </div>
    			<div class="input-group mb-3">
-               <select name="network" id="datanet" class="form-control" onchange="dataSelect();" required="">
+               <select name="network" id="datanet" class="form-control" onchange="selectDataBundle()" required="">
                 <option value="">Choose Network</option>
             	  <option value="MTN">MTN</option>
                	<option value="GLO">GLO</option>
@@ -121,101 +121,27 @@ include "header.php";
                   </tr>
                </thead>
                <tbody>
+                <?php
+                  $sql1 = "SELECT * FROM history WHERE uname = '$username'";
+                  $res1 = mysqli_query($conn, $sql1);
+                  while($history = mysqli_fetch_assoc($res1)){
+
+                  
+
+?>
                                 <tr>
-                   <td>MTN </td>
-                    <td> 09033834777 </td>
-                  <td> &#8358;130 </td>
-                  <td>500MB </td>
-                                      <td style="color: green;"><b> successful </b></td>
-                                    <td> 0249158736 </td>
-                  <td> Thu 26 January, 2023; 10:27 PM</td>
+                   <td><?php echo $history['network'];?> </td>
+                    <td> <?php echo $history['phone'];?>  </td>
+                  <td> &#8358;<?php echo $history['amount'];?>  </td>
+                  <td><?php echo $history['plan'];?>  </td>
+                                      <td style="color: green;"><b> <?php echo $history['status'];?>  </b></td>
+                                    <td> <?php echo $history['transid'];?>  </td>
+                  <td><?php echo $history['date'];?> </td>
                    <td> <a href="buy_data.php?id=0249158736"> <button type="submit" class="btnn btn-primary" name="orderid"> Query </button> </a> </td>
                   
                   </tr>
 
-                                <tr>
-                   <td>MTN </td>
-                    <td> 09033834777 </td>
-                  <td> &#8358;25 </td>
-                  <td>50.0MB </td>
-                                      <td style="color: green;"><b> successful </b></td>
-                                    <td> 116184 </td>
-                  <td> Tue 17 January, 2023; 8:51 AM</td>
-                   <td> <a href="buy_data.php?id=116184"> <button type="submit" class="btnn btn-primary" name="orderid"> Query </button> </a> </td>
-                  
-                  </tr>
-
-                                <tr>
-                   <td>MTN </td>
-                    <td> 09033834777 </td>
-                  <td> &#8358;70 </td>
-                  <td>250.0MB </td>
-                                      <td style="color: green;"><b> successful </b></td>
-                                    <td> 111019 </td>
-                  <td> Fri 13 January, 2023; 12:42 PM</td>
-                   <td> <a href="buy_data.php?id=111019"> <button type="submit" class="btnn btn-primary" name="orderid"> Query </button> </a> </td>
-                  
-                  </tr>
-
-                                <tr>
-                   <td>MTN </td>
-                    <td> 09033834777 </td>
-                  <td> &#8358;250 </td>
-                  <td>1GB </td>
-                                      <td style="color: green;"><b> successful </b></td>
-                                    <td> 103700 </td>
-                  <td> Sat 07 January, 2023; 3:02 PM</td>
-                   <td> <a href="buy_data.php?id=103700"> <button type="submit" class="btnn btn-primary" name="orderid"> Query </button> </a> </td>
-                  
-                  </tr>
-
-                                <tr>
-                   <td>MTN </td>
-                    <td> 09033834777 </td>
-                  <td> &#8358;25 </td>
-                  <td>50.0MB </td>
-                                      <td style="color: green;"><b> successful </b></td>
-                                    <td> 97201 </td>
-                  <td> Sun 01 January, 2023; 11:23 PM</td>
-                   <td> <a href="buy_data.php?id=97201"> <button type="submit" class="btnn btn-primary" name="orderid"> Query </button> </a> </td>
-                  
-                  </tr>
-
-                                <tr>
-                   <td>MTN </td>
-                    <td> 09033834777 </td>
-                  <td> &#8358;130 </td>
-                  <td>500MB </td>
-                                      <td style="color: green;"><b> successful </b></td>
-                                    <td> 5438027691 </td>
-                  <td> Sun 01 January, 2023; 2:01 PM</td>
-                   <td> <a href="buy_data.php?id=5438027691"> <button type="submit" class="btnn btn-primary" name="orderid"> Query </button> </a> </td>
-                  
-                  </tr>
-
-                                <tr>
-                   <td>MTN </td>
-                    <td> 09033834777 </td>
-                  <td> &#8358;110 </td>
-                  <td>500MB </td>
-                                      <td style="color: green;"><b> successful </b></td>
-                                    <td> 4830271956 </td>
-                  <td> Sun 01 January, 2023; 1:49 PM</td>
-                   <td> <a href="buy_data.php?id=4830271956"> <button type="submit" class="btnn btn-primary" name="orderid"> Query </button> </a> </td>
-                  
-                  </tr>
-
-                                <tr>
-                   <td>MTN </td>
-                    <td> 09033834777 </td>
-                  <td> &#8358;250 </td>
-                  <td>1GB </td>
-                                      <td style="color: green;"><b> successful </b></td>
-                                    <td> 61107 </td>
-                  <td> Tue 29 November, 2022; 4:15 PM</td>
-                   <td> <a href="buy_data.php?id=61107"> <button type="submit" class="btnn btn-primary" name="orderid"> Query </button> </a> </td>
-                  
-                  </tr>
+              <?php } ?>          
 
                                   </tbody>
              </table>
@@ -328,6 +254,33 @@ function toggleElement(id,uid)
         });
     </script>
     
+    <script>
+
+function selectDataBundle(){
+
+  var network = document.getElementById("datanet").value;
+
+  if(network != ""){
+
+    $.ajax({
+
+      type: "post",
+      url: "checkdata.php",
+      data: "net="+network,
+      success: function(result){
+document.getElementById("dataprice").innerHTML = result;
+//alert(result);
+      }
+    });
+
+  }
+
+
+
+}
+
+</script>
+
     <script src="datacheck.js"></script>
     <script src="billcheck.js"></script>
     <script src="electchecks.js"></script>

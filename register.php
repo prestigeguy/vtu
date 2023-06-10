@@ -5,13 +5,13 @@ $msg = "";
 
 if(isset($_POST['register'])){
 
-	$firstname = $_POST['fname'];
-	$lastname = $_POST['lname'];
-	$username = $_POST['uname'];
-	$pnumber = $_POST['pnumber'];
-	$email = $_POST['email'];
-	$pass = $_POST['pass'];
-	$cpass = $_POST['cpass'];
+	$firstname = filter_var($_POST['fname'], FILTER_SANITIZE_STRING);
+	$lastname = filter_var($_POST['lname'], FILTER_SANITIZE_STRING);
+	$username = filter_var($_POST['uname'], FILTER_SANITIZE_STRING);
+	$pnumber = filter_var($_POST['pnumber'], FILTER_SANITIZE_STRING);
+	$email = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
+	$pass = filter_var($_POST['pass'], FILTER_SANITIZE_STRING);
+	$cpass = filter_var($_POST['cpass'], FILTER_SANITIZE_STRING);
 
 	if($firstname == ""){
 		$msg = "Firstname is required";
@@ -37,6 +37,10 @@ if(isset($_POST['register'])){
 
 	if($pass != $cpass){
 		$msg =  "Password does not match";
+	}
+
+	if(!filter_var($email, FILTER_VALIDATE_EMAIL)){
+		$msg =  "Valid email is required";
 	}
 	
 	$usql = "SELECT * FROM users WHERE username = '$username' OR email = '$email' LIMIT 1";
