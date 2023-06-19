@@ -2,6 +2,9 @@
 <?php 
 session_start();
 include "../conn.php";
+$msg =  $success = "";
+$date = date("Y-m-d H:s:i");
+$tnx = uniqid('ID');
 if(isset($_SESSION['uname'])){
 
   $usernameph = $_SESSION['uname'];
@@ -30,6 +33,75 @@ if(mysqli_num_rows($res) > 0){
 die();
 }
 
+
+if(isset($_POST['buy'])){
+
+
+$network = filter_var($_POST['network'], FILTER_SANITIZE_STRING);
+$plan = filter_var($_POST['plan'], FILTER_SANITIZE_STRING);
+$phone = filter_var($_POST['phone'], FILTER_SANITIZE_STRING);
+
+
+if($network == ""){
+  $msg = "Please select network";
+}
+if($plan == ""){
+  $msg = "Please select plan";
+}
+if($phone == ""){
+  $msg = "Please input phone number";
+}
+
+$sql = "SELECT price FROM data_bundles WHERE network = '$network' AND bundle = '$plan'";
+$res = mysqli_query($conn,$sql);
+if(mysqli_num_rows($res) > 0){
+  $sqlfetch = mysqli_fetch_assoc($res);
+  $dataprice = $sqlfetch['price'];
+}else{
+  $msg = "Please select a valid data bundle";
+}
+
+if($wallets >= $dataprice){
+
+}else{
+  $msg = "Insufficient balance. Kindly fund your wallet";
+}
+
+
+if($msg == ""){
+
+  $sql1 = "UPDATE users SET wallets = wallets - '$dataprice' WHERE username = '$username'";
+  $res1 = mysqli_query($conn, $sql1);
+
+  if($res1){
+
+    $sql2 = "INSERT INTO history (uname, amount, transid, network, date, status, plan, phone) VALUES ('$username','$dataprice','$tnx','$network','$date','Approved','$plan','$phone')";
+    $res2 = mysqli_query($conn, $sql2);
+    if($res2){
+
+      $success = "Your transaction has been processed successfully";
+
+    }
+  }
+
+}
+
+}
+
+
+$sql = "SELECT * FROM users WHERE username = '$usernameph' OR phone_number = '$usernameph' LIMIT 1";
+$res = mysqli_query($conn, $sql);
+
+if(mysqli_num_rows($res) > 0){
+$usrdetails = mysqli_fetch_assoc($res);
+
+$wallets = $usrdetails['wallets'];
+
+}
+
+
+
+//echo date("Y-m-d H:i:s");
 include "header.php";
 ?>
 		<!-- header end --><!-- welcome -->
@@ -62,9 +134,19 @@ include "header.php";
    		<form id="form" method="post">
    			<div class="card-body">
                     
-        
+        <?php if($msg != ""){
+echo "<div class='alert alert-danger'> $msg </div>";
+        }
+        if($success != ""){
+          echo "<div class='alert alert-success'> $success </div>";
+        }
+
+          ?>
           <div class="input-group mb-3">
-           <input type="text" name="wallet" id="phone1" value="" class="form-control" placeholder="Wallet: &#8358;<?php echo $wallets;?>" readonly>
+           <input type="text" name="wallet" id="phone1" value="" class="form-control" placeholder="Wallet: &#8358;
+           
+           
+           " readonly>
          </div>
    			<div class="input-group mb-3">
                <select name="network" id="datanet" class="form-control" onchange="selectDataBundle()" required="">
@@ -81,10 +163,7 @@ include "header.php";
                 <option></option>
                </select>
            </div>
-           <div id="price">
-            <input type="hidden" value='' name='amount' class='form-control' /> 
-            
-           </div> 
+          
            <div class="input-group mb-3">
            <input type="tel" name="phone" id="phone1" maxlength="11" minlength="11" class="form-control" value="" placeholder="Enter recipient's number" required="">
          </div>
