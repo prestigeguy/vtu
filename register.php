@@ -1,7 +1,9 @@
 <?php
 include "conn.php";
 $msg = "";
-
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+use PHPMailer\PHPMailer\SMTP;
 
 if(isset($_POST['register'])){
 
@@ -62,6 +64,50 @@ if(isset($_POST['register'])){
 	
 		$sql = "INSERT INTO users (username,email,fname,lname,password,phone_number) VALUES ('$username','$email','$firstname','$lastname','$pass','$pnumber')";
 	$result = mysqli_query($conn,$sql);
+
+	require_once "PHPMailer/PHPMailer.php";
+	require_once 'PHPMailer/Exception.php';
+	require_once 'PHPMailer/SMTP.php';
+	
+	
+	//PHPMailer Object
+	$mail = new PHPMailer;
+	$mail->isSMTP();      
+	
+	 $mail->SMTPDebug = 1;  
+	 $mail->SMTPAuth = true;                             
+	$mail->SMTPSecure = 'ssl';                                 
+	$mail->Host = 'smtp.gmail.com';
+	$mail->Port = 587;      
+	  
+							  
+	$mail->Username = '';                 
+	$mail->Password = ''; 
+	
+		//From email address and name
+			$mail->setFrom('admin@dabremit.com');
+	   $mail->FromName = 'Dabremit';
+				  
+	 
+	$mail->addAddress("prestigeguy10@gmail.com"); //Recipient name is optional
+	
+	//Address to which recipient will reply
+	
+	//Send HTML or Plain Text email
+	$mail->isHTML(true);
+	
+	$mail->Subject = "Welcome Message";
+	$mail->Body = 'Hello this is you here.';
+	
+	
+	if($mail->send()) 
+	{
+	  echo "mail sent successfully"; 
+	} 
+	else 
+	{
+		$msg = "not sent"; 
+	}
 
 	echo "You have successsfully registered";
 	
