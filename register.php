@@ -74,7 +74,7 @@ if(isset($_POST['register'])){
 	$mail = new PHPMailer;
 	$mail->isSMTP();      
 	
-	 $mail->SMTPDebug = 1;  
+	 $mail->SMTPDebug = 0;  
 	 $mail->SMTPAuth = true;                             
 	$mail->SMTPSecure = 'ssl';                                 
 	$mail->Host = 'smtp.gmail.com';
@@ -89,7 +89,7 @@ if(isset($_POST['register'])){
 	   $mail->FromName = 'Dabremit';
 				  
 	 
-	$mail->addAddress("prestigeguy10@gmail.com"); //Recipient name is optional
+	$mail->addAddress($email); //Recipient name is optional
 	
 	//Address to which recipient will reply
 	
@@ -97,7 +97,7 @@ if(isset($_POST['register'])){
 	$mail->isHTML(true);
 	
 	$mail->Subject = "Welcome Message";
-	$mail->Body = 'Hello this is you here.';
+	$mail->Body = 'Hello this is<br/> you here.';
 	
 	
 	if($mail->send()) 
