@@ -1,6 +1,7 @@
 
 <?php 
 session_start();
+//error_reporting(0);
 include "../conn.php";
 $msg =  $success = "";
 $date = date("Y-m-d H:s:i");
@@ -70,12 +71,46 @@ if($wallets >= $dataprice){
 
 if($msg == ""){
 
+   //Input parameters as given in the documentation
+   $request = "";
+   $param["username"] = "Prestigeguy";
+$param["apiKey"] = "sagfk6e37elbhmhklwjd8xip8upnxhtqa";
+$param["network"] = $network;
+$param["phoneNumber"] = $phone;
+$param["dataPlan"] = $plan;
+
+//unique id, you can use time()
+foreach($param as $key=>$val) //traverse through each member of the param array
+{
+$request .= $key . "=" . urlencode($val); //we have to urlencode the values
+$request .= '&'; //append the ampersand (&) sign after each paramter/value pair
+}
+$len = strlen($request) - 1;
+$request = substr($request, 0, $len); //remove the final ampersand sign from the request
+
+$url = "https://subandgain.com/api/data.php?".$request; //The URL given in the documentation without parameters
+$ch = curl_init();
+curl_setopt($ch, CURLOPT_URL, "$url");
+curl_setopt($ch, CURLOPT_HEADER, false);
+curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
+curl_setopt($ch, CURLOPT_RETURNTRANSFER,1); //return as a variable
+$response = curl_exec($ch);
+curl_close($ch);
+echo $response;
+//decode response to get trans_id,network,phone_number,amount,status and balance
+$array = json_decode($response, true); //decode the JSON response
+
+$ustatus = $array['status'];
+$transid = $array['trans_id'];
+
+if($ustatus == "pending" || $ustatus == "Approved"){
+
   $sql1 = "UPDATE users SET wallets = wallets - '$dataprice' WHERE username = '$username'";
   $res1 = mysqli_query($conn, $sql1);
 
   if($res1){
 
-    $sql2 = "INSERT INTO history (uname, amount, transid, network, date, status, plan, phone) VALUES ('$username','$dataprice','$tnx','$network','$date','Approved','$plan','$phone')";
+    $sql2 = "INSERT INTO history (uname, amount, transid, network, date, status, plan, phone) VALUES ('$username','$dataprice','$transid','$network','$date','$ustatus','$plan','$phone')";
     $res2 = mysqli_query($conn, $sql2);
     if($res2){
 
@@ -83,6 +118,10 @@ if($msg == ""){
 
     }
   }
+
+}else{
+  $msg = "Order not processed, please try again";
+}
 
 }
 
@@ -143,10 +182,7 @@ echo "<div class='alert alert-danger'> $msg </div>";
 
           ?>
           <div class="input-group mb-3">
-           <input type="text" name="wallet" id="phone1" value="" class="form-control" placeholder="Wallet: &#8358;
-           
-           
-           " readonly>
+           <input type="text" name="wallet" id="phone1" value="" class="form-control" placeholder="Wallet: &#8358;<?php echo $wallets;?>" readonly>
          </div>
    			<div class="input-group mb-3">
                <select name="network" id="datanet" class="form-control" onchange="selectDataBundle()" required="">
