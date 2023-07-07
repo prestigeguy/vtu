@@ -1,4 +1,3 @@
-
 <?php 
 session_start();
 //error_reporting(0);
@@ -74,7 +73,7 @@ if($msg == ""){
    //Input parameters as given in the documentation
    $request = "";
    $param["username"] = "Prestigeguy";
-$param["apiKey"] = "sagfk6e37elbhmhklwjd8xip8upnxhtqa";
+$param["apiKey"] = "sagfk6";
 $param["network"] = $network;
 $param["phoneNumber"] = $phone;
 $param["dataPlan"] = $plan;
