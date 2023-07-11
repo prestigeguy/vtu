@@ -71,13 +71,13 @@ if($wallets >= $dataprice){
 if($msg == ""){
 
    //Input parameters as given in the documentation
+   //$request = "username=Prestigeguy&apiKey=sagfk6&network=$network&dataPlan=$plan&phoneNumber=$phone";
    $request = "";
    $param["username"] = "Prestigeguy";
 $param["apiKey"] = "sagfk6";
 $param["network"] = $network;
 $param["phoneNumber"] = $phone;
 $param["dataPlan"] = $plan;
-
 //unique id, you can use time()
 foreach($param as $key=>$val) //traverse through each member of the param array
 {
@@ -95,14 +95,17 @@ curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
 curl_setopt($ch, CURLOPT_RETURNTRANSFER,1); //return as a variable
 $response = curl_exec($ch);
 curl_close($ch);
-echo $response;
+//echo $response;
 //decode response to get trans_id,network,phone_number,amount,status and balance
 $array = json_decode($response, true); //decode the JSON response
+
+/*$array = array("status"=>"Approved","trans_id"=>"88c4r5one73","network"=>"MTN","dataPlan"=>"1GB","phoneNumber"=>"09067879810",
+"api_response"=>"Dear Customer, You have successfully shared 1GB Data to 2349067879810.","balance"=>"2500"); */
 
 $ustatus = $array['status'];
 $transid = $array['trans_id'];
 
-if($ustatus == "pending" || $ustatus == "Approved"){
+if($ustatus == "Approved"){
 
   $sql1 = "UPDATE users SET wallets = wallets - '$dataprice' WHERE username = '$username'";
   $res1 = mysqli_query($conn, $sql1);
